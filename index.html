@@ -1,0 +1,102 @@
+<html>
+
+<head>
+  <title>New Kind of Wallet | NKN Wallet</title>
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="shortcut icon" href="assets/favicon.ico">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <img src="assets/nknmesh.png" alt="image" class="nknmesh">
+  <div class="container" style="margin-top: 5%;">
+    <div class="row">
+      <div class="col hideonsmall"></div>
+      <div class="col-6">
+       <h2>New Kind of Wallet<span style="font-size:12;"> v0.1<span></h2>
+
+        <ul class="nav nav-tabs">
+          <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#create">Create New Wallet</a></li>
+          <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#transfer">Existing Wallet</a></li>
+        </ul>
+
+        <div class="tab-content">
+
+          <div id="create" class="tab-pane fade in active show">
+            <div class="form-group"><br>
+             <input type='password' class="form-control" name='cpass' placeholder="Choose Password" id='cpass'>
+           </div>
+           <p>NOTE: You will lose access to your wallet if you misplace the wallet file or forget your password. Please backup your wallet file, then write down the password on a piece of paper or tree bark, and keep them in a safe place.</p>
+           <button type="button" class="btn btn-success" onclick="createnew()">Create Wallet</button><br>
+           <h5 id="newaddr"><button type="button" style="display: none;" class="copybtn btn-light hide" id="copybtn" data-container="body" data-toggle="popover" data-placement="right" data-content="Copied!" onclick="copyToClipboard('#genaddr')">
+            <i class="fa fa-copy"></i>
+          </button></h5>      
+        </div>
+
+        <div id="transfer" class="tab-pane fade">
+          <br>
+          <h5>Load</h5>
+          <p></p>
+          <form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
+            <fieldset>
+              <label for="fileinput" class="btn btn-secondary custom-file-upload">
+                <i class="fa fa-wallet"></i> Select Wallet File
+              </label><br>
+              <input id="fileinput" type="file"/>
+              <div class="form-group">
+               <input type='password' class="form-control" name='pass' placeholder="Enter Password" id='pass'>
+             </div>
+             <input class="btn btn-success" type='button' id='btnLoad' value='Unlock' onclick='loadFile()'>    <button type="button" class="btn btn-light" onclick="getbalance()">Refresh Balance</button>
+           </fieldset>
+         </form>
+         <span class="loadaddr" role="alert" id="loadaddr"></span>
+         <h1 id="nkn_balance"></h1>
+         <br>
+
+         <h5>Send</h5>
+         <div class="form-group">
+          <label for="addr">Recipent</label>
+          <input type='text' class="form-control" name='addr' placeholder="NKN Address" id='addr'>
+        </div>
+        <div class="form-group">
+          <label for="addr">Amount</label>
+          <input type='number' class="form-control" name='amount' placeholder="1000.00" id='amount'>
+        </div>
+        <button type="button" class="btn btn-success" onclick="transfer()">Transfer</button>
+        <br><br>
+        <div class="alert alert-success alert-dismissible fade hide" role="alert" id="txsuccess">
+          <strong>Transfer Successful!</strong> TxHash: 
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="alert alert-danger alert-dismissible fade hide" role="alert" id="txfail">
+          <strong>Transfer Failed!</strong> Error: 
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="alert alert-danger alert-dismissible fade hide" role="alert" id="badpass">
+          <strong>Password Incorrect!</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="col hideonsmall"></div>
+
+</div>
+</div>
+
+<script src="js/nkn-wallet.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/script.js"></script>
+
+</body>
+
+</html>
