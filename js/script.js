@@ -73,20 +73,8 @@
 
   function createnew(){
     var p = document.getElementById('cpass').value;
-    var n = document.getElementById('nknname').value;
     const wallet = nknWallet.newWallet(p);
     const walletJson = wallet.toJSON();
-    walletFromJson.registerName(n, p).then(function(data) {
-      console.log('name success: ', data);
-      //document.getElementById("txsuccess").classList.remove('hide');
-      //document.getElementById("txsuccess").classList.add('show');
-      //document.getElementById("txsuccess").innerHTML+= data;
-    }).catch(function(error) {
-      console.log('name fail: ', error);
-      //document.getElementById("txfail").classList.remove('hide');
-      //document.getElementById("txfail").classList.add('show');
-      //document.getElementById("txfail").innerHTML+= JSON.stringify(error);
-    });
     download('NKN_wallet.dat', walletJson);
     console.log(wallet.address);
     $('#newaddr').prepend ("<span style='font-size:12;'>Your wallet has been successfully generated! Your new NKN address is:</span> <br><span id='genaddr'>"+ wallet.address + "</span>");
