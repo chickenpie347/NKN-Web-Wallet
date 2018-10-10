@@ -50,7 +50,7 @@
 
  function resolveName(name) {
   return new Promise(function(resolve, reject) {
-    axios.post("http://138.197.147.97:30003",{"jsonrpc": "2.0","method": "getaddressbyname","params": { "name": name},"id":"1"}).then(function(response){
+    axios.post("https://newkindofwallet.com:30003",{"jsonrpc": "2.0","method": "getaddressbyname","params": { "name": name},"id":"1"}).then(function(response){
       if (response.data.result){
         resolve(response.data.result);
       }
