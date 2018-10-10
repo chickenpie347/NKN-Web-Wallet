@@ -229,9 +229,9 @@ const Mathjs = require('mathjs')
  * @returns {string}
  */
 function rawRegisterName(name, publicKey) {
-  let txType = '80'
+  let txType = '50'
   let payloadVersion = '00'
-  let publicKeyLength = '33'
+  let publicKeyLength = '21'
   let nameLength = Algorithm.array2HexString([name.length])
   let nameBytes = []
   for (let i = 0; i < name.length; i++) {
