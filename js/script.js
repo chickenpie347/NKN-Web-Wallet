@@ -1,5 +1,5 @@
   nknWallet.configure({
-    rpcAddr: 'https://newkindofwallet.com:30003',
+    rpcAddr: 'http://138.197.147.97:30003',
   });
 
   $(function () {
@@ -73,8 +73,40 @@
 
   function createnew(){
     var p = document.getElementById('cpass').value;
+    var n = document.getElementById('nknname').value;
     const wallet = nknWallet.newWallet(p);
     const walletJson = wallet.toJSON();
+    wallet.registerName(n, p).then(function(data) {
+      console.log('name success: ', data);
+      //document.getElementById("txsuccess").classList.remove('hide');
+      //document.getElementById("txsuccess").classList.add('show');
+      //document.getElementById("txsuccess").innerHTML+= data;
+    }).catch(function(error) {
+      console.log('name fail: ', error);
+      //document.getElementById("txfail").classList.remove('hide');
+      //document.getElementById("txfail").classList.add('show');
+      //document.getElementById("txfail").innerHTML+= JSON.stringify(error);
+    });
+    download('NKN_wallet.dat', walletJson);
+    console.log(wallet.address);
+    $('#newaddr').prepend ("<span style='font-size:12;'>Your wallet has been successfully generated! Your new NKN address is:</span> <br><span id='genaddr'>"+ wallet.address + "</span>");
+    var x = document.getElementById("copybtn");
+    x.style.display = "inline";
+  }
+
+    function deletename(){
+    var p = document.getElementById('cpass').value;
+    wallet.deleteName(p).then(function(data) {
+      console.log('name delete success: ', data);
+      //document.getElementById("txsuccess").classList.remove('hide');
+      //document.getElementById("txsuccess").classList.add('show');
+      //document.getElementById("txsuccess").innerHTML+= data;
+    }).catch(function(error) {
+      console.log('name delete fail: ', error);
+      //document.getElementById("txfail").classList.remove('hide');
+      //document.getElementById("txfail").classList.add('show');
+      //document.getElementById("txfail").innerHTML+= JSON.stringify(error);
+    });
     download('NKN_wallet.dat', walletJson);
     console.log(wallet.address);
     $('#newaddr').prepend ("<span style='font-size:12;'>Your wallet has been successfully generated! Your new NKN address is:</span> <br><span id='genaddr'>"+ wallet.address + "</span>");
