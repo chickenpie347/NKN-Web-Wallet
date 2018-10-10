@@ -1,43 +1,55 @@
  input[type="file"] {
-    display: none;
-  }
-  .custom-file-upload {
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
-  }
-  #genaddr{
-    color: #77B300;
-  }
+  display: none;
+}
+.custom-file-upload {
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+#genaddr{
+  color: #77B300;
+}
 
-  .copybtn {
-    background: black;
-    border:none;
-  }
+.copybtn {
+  background: black;
+  border:none;
+}
 
+.nknmesh {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin-right: 100px;
+  margin-bottom: 100px;
+}
+
+.loadaddr {
+  display: none;
+}
+
+.tooltip-arrow,
+.tooltip > .tooltip-inner {background-color: #2A9FD6;}
+
+.tooltip .arrow::before {
+  border-bottom-color: #2A9FD6;
+}
+
+#resolvedaddr {
+  color: #77B300;
+}
+
+@media screen and (max-width: 1024px) {
+  .hideonsmall {
+    display: none !important;
+  }
   .nknmesh {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin-right: 100px;
-    margin-bottom: 100px;
+    display: none !important;
   }
+  .col-6 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
 
-  .loadaddr {
-    display: none;
-  }
-
-  @media screen and (max-width: 1024px) {
-    .hideonsmall {
-      display: none !important;
-    }
-    .nknmesh {
-      display: none !important;
-    }
-    .col-6 {
-      -webkit-box-flex: 0;
-      -ms-flex: 0 0 100%;
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
-  }

@@ -7,6 +7,7 @@
   <link rel="shortcut icon" href="assets/favicon.ico">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -18,21 +19,46 @@
        <h2>New Kind of Wallet<span style="font-size:12;"> v0.1<span></h2>
 
         <ul class="nav nav-tabs">
-          <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#create">Create New Wallet</a></li>
-          <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#transfer">Existing Wallet</a></li>
+          <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#create">New Wallet</a></li>
+          <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#transfer">Load Wallet</a></li>
+          <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#name">Name Service</a></li>
         </ul>
 
         <div class="tab-content">
 
           <div id="create" class="tab-pane fade in active show">
             <div class="form-group"><br>
-             <input type='password' class="form-control" name='cpass' placeholder="Choose Password" id='cpass'>
+             <input type='password' class="form-control" name='cpass' placeholder="Password" id='cpass'><br>
+             <input type='text' class="form-control" maxlength="12" name='nknname' placeholder="NKN Name (optional)" id='nknname'>
            </div>
            <p>NOTE: You will lose access to your wallet if you misplace the wallet file or forget your password. Please backup your wallet file, then write down the password on a piece of paper or tree bark, and keep them in a safe place.</p>
-           <button type="button" class="btn btn-success" onclick="createnew()">Create Wallet</button><br>
+           <button type="button" class="btn btn-success" onclick="createNew()">Create Wallet</button><br>
            <h5 id="newaddr"><button type="button" style="display: none;" class="copybtn btn-light hide" id="copybtn" data-container="body" data-toggle="popover" data-placement="right" data-content="Copied!" onclick="copyToClipboard('#genaddr')">
             <i class="fa fa-copy"></i>
-          </button></h5>      
+          </button></h5>  
+
+          <div class="alert alert-danger alert-dismissible fade hide" role="alert" id="namefail">
+            <strong>Name Registration Failed!</strong> Error: 
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div> 
+
+          <div class="alert alert-success alert-dismissible fade hide" role="alert" id="namesuccess">
+            <strong>Name Registrtion Successful!</strong> Txhash: 
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+
+          <div class="alert alert-success alert-dismissible fade hide" role="alert" id="nameinvalid">
+            <strong>Name Invalid!</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
         </div>
 
         <div id="transfer" class="tab-pane fade">
@@ -46,20 +72,29 @@
               </label><br>
               <input id="fileinput" type="file"/>
               <div class="form-group">
-               <input type='password' class="form-control" name='pass' placeholder="Enter Password" id='pass'>
+               <input type='password' class="form-control" name='pass' placeholder="Password" id='pass'>
              </div>
-             <input class="btn btn-success" type='button' id='btnLoad' value='Unlock' onclick='loadFile()'>    <button type="button" class="btn btn-light" onclick="getbalance()">Refresh Balance</button>
+             <input class="btn btn-success" type='button' id='btnLoad' value='Unlock' onclick='loadFile()'>    <button type="button" class="btn btn-light" onclick="getBalance()">Refresh Balance</button>
            </fieldset>
          </form>
          <span class="loadaddr" role="alert" id="loadaddr"></span>
          <h1 id="nkn_balance"></h1>
          <br>
-
-         <h5>Send</h5>
-         <div class="form-group">
-          <label for="addr">Recipent</label>
-          <input type='text' class="form-control" name='addr' placeholder="NKN Address" id='addr'>
+         <div class="alert alert-danger alert-dismissible fade hide" role="alert" id="badpass">
+          <strong>Password Incorrect!</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+
+        <h5>Send</h5>
+        <div class="form-group">
+          <label for="addr">Recipent</label>
+          <input type='text' class="form-control" name='addr' onkeyup="resolvebtn()" placeholder="NKN Address/NKN Name" id='addr'><br>
+          <button type="button" class="btn btn-light resolvebtn" id="resolvebtn" onclick="resolveSend()">Resolve</button>
+          <span id="sendaddr"></span>
+        </div>
+
         <div class="form-group">
           <label for="addr">Amount</label>
           <input type='number' class="form-control" name='amount' placeholder="1000.00" id='amount'>
@@ -78,17 +113,74 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="alert alert-danger alert-dismissible fade hide" role="alert" id="badpass">
-          <strong>Password Incorrect!</strong>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
       </div>
+
+      <div id="name" class="tab-pane fade">
+        <br>
+        <h5>Resolve</h5>
+        <div class="form-group"><br>
+         <input type='text' class="form-control" maxlength="12" name='resname' placeholder="NKN Name (optional)" id='resname'>
+       </div>
+       <button type="button" class="btn btn-success" onclick="getNameaddr()">Resolve</button><br><br>
+       <span id="resolvederr"></span>
+       <h5 id="resaddr"><br><span id='resolvedaddr'></span><button type="button" style="display: none;" class="copybtn btn-light hide" id="rescopybtn" data-container="body" data-toggle="popover" data-placement="right" data-content="Copied!" onclick="copyToClipboard('#resolvedaddr')">
+        <i class="fa fa-copy"></i>
+      </button></h5> 
+
+      <h5>Register</h5>
+      <div class="form-group"><br>
+        <input type='text' class="form-control" maxlength="12" name='registername' placeholder="Name" id='registername'><br>
+        <input type='password' class="form-control" maxlength="12" name='registerpass' placeholder="Wallet Password" id='registerpass'>
+      </div>
+      <button type="button" class="btn btn-success" onclick="registerName()">Register</button>
+      <span id="registerloadwalletalert"></span>
+      <div class="alert alert-success alert-dismissible fade hide" role="alert" id="registersuccess">
+        <strong>Registration Successful!</strong> TxHash: 
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="alert alert-danger alert-dismissible fade hide" role="alert" id="registerfail">
+        <strong>Registration Failed!</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <h5>Delete</h5>
+      <div class="form-group"><br>
+       <input type='password' class="form-control" maxlength="12" name='deletepass' placeholder="Wallet Password" id='deletepass'>
+     </div>
+     <button type="button" class="btn btn-success" onclick="deleteName()">Delete</button>
+     <span id="loadwalletalert"></span><br><br>
+
+     <div class="alert alert-success alert-dismissible fade hide" role="alert" id="deletesuccess">
+      <strong>Name Deleted!</strong> TxHash: 
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="alert alert-danger alert-dismissible fade hide" role="alert" id="deletefail">
+      <strong>Deletion Failed!</strong>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+
+    <div class="alert alert-success alert-dismissible fade hide" role="alert" id="resnameinvalid">
+      <strong>Name Invalid!</strong>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
 
   </div>
-  <div class="col hideonsmall"></div>
+
+</div>
+
+</div>
+<div class="col hideonsmall"></div>
 
 </div>
 </div>
